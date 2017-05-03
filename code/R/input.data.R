@@ -38,6 +38,18 @@ generateTheoreticalData <- function(N, class.label, class.file){
   probEastPanelOpen <- getParam1(probData, "configdata.state.layout.eastPanelIsOpen")
   probDoSearch <- getParam1(probData, "configdata.state.doSearch")
   
+  rightPanelProb <- as.numeric(gsub("%", "", getParam1(probData, "configdata.config.layout.eastPanelSize")))
+  leftPanelProb <- as.numeric(gsub("%", "", getParam1(probData, "configdata.config.layout.westPanelSize")))
+  bottomPanelProb <- as.numeric(gsub("%", "", getParam1(probData, "configdata.config.layout.southPanelSize")))
+  
+  
+  ageFilterProb <- getParam1(probData, "usedAgeFilter")
+  latitudeFilterProb <- getParam1(probData, "usedLatitudeFilter")
+  abundanceFilterProb <- getParam1(probData, "usedAbundanceFilter")
+  PIFilterProb <- getParam1(probData, "usedPIFilter")
+  recordTypeFilterProb <- getParam1(probData, "usedRecordTypeFilter")
+  
+  
   ## these are two parameter distributions --> todo: make this better code
   zoom1 <- getParam1(probData, "configdata.state.map.zoom")
   zoom2 <- getParam2(probData, "configdata.state.map.zoom")
@@ -73,6 +85,30 @@ generateTheoreticalData <- function(N, class.label, class.file){
   model$configdata.config.timer.totalElapsed <- rgamma(N, totalTime1, totalTime2)
   
   model$configdata.config.timer.loadElapsed <- rgamma(N, dataTime1, dataTime2)
+  
+  
+  ## for panel widths
+  model$configdata.config.layout.southPanelSize <- rbinom(N, 100, bottomPanelProb)
+
+  model$configdata.config.layout.westPanelSize <- rbinom(N, 100, leftPanelProb)
+
+  model$configdata.config.layout.eastPanelSize <- rbinom(N, 100, rightPanelProb)
+  
+  ## for panel use
+  model$usedAgeFilter <- as.logical(rbinom(N, 1, ageFilterProb))
+  model$usedLatitudeFilter <- as.logical(rbinom(N, 1, latitudeFilterProb))
+  model$usedAbundanceFilter <- as.logical(rbinom(N, 1, abundanceFilterProb))
+  model$usedPIFilter <- as.logical(rbinom(N, 1, PIFilterProb))
+  model$usedRecordTypeFilter <- as.logical(rbinom(N, 1, recordTypeFilterProb))
+
+  
+  
+  ## if the panel isn't open, it doesn't get a width
+  model$configdata.config.layout.southPanelSize[!model$configdata.state.layout.southPanelIsOpen] = 0
+  model$configdata.config.layout.westPanelSize[!model$configdata.state.layout.westPanelIsOpen] = 0
+  model$configdata.config.layout.eastPanelSize[!model$configdata.state.layout.eastPanelIsOpen] = 0
+  
+  ## probability of having the 
   
   ## convert to data frame
   model.df <- do.call(cbind, lapply(model, data.frame, stringsAsFactors=FALSE))
