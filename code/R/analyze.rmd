@@ -10,11 +10,6 @@ output:
     fig_caption: true
 ---
 
-## Probabilistic Scenario-Based Design: Generating insight from probability-based theoretical user models
-
-#### Scott Farley
-#### April 2017
-
 
 ```{r setup, echo=F, message=F, warning=F, error=T}
 doInstall = F
@@ -43,7 +38,7 @@ setwd("/users/scottsfarley/documents/geog970_eval")
 Constructing hypothetical scenarios and user naratives is a common technique for communicating the envisioned user experience (UX) of a tool. Using this approach, application developers rapidly build stories of expected use cases that concretize the intended UX. This design strategy is effective, cheap, flexible, and simple to implement. However, most narrative scenarios are not formal, rather they lack a mathematical basis suitable for statistical testing and rigorous delineation of usership patterns. In this paper, I describe an effort for underpinning use case scenarios (UCSs) with a probability framework. Under this framework, UCSs are modified to include probability distributions describing the use of each interface component. This approach offers at least three advantages that complement traditional scenario-based design approaches: (1) it enables formal statistical testing of use patterns, with both hypothetical data and, once the tool is put into production, real usage data, (2) it creates the potential for novel visualizations of application use, and (3) it creates the possibility of incorporating Bayesian data assimilation into interface design decisions, offering insight for future designers. Here, I discuss the application of this method to an in-development software tool, Ice Age Mapper, a tool for exploring multivariate, spatiotemporal ecological change in recent geologic history. Several UCSs are explored and fuzzy statistical methods are shown to effectively delineate between them when configurations are drawn at random from the newly implemented probability distributions. 
 
 # Introduction
-Front-end code and design frameworks, widespread access to low-cost, high-speed interaction connection, and ubitiquous mboile computing have resulted in richly featured, highly interactive applications distributed through the internet as web apps. So-called Web 2.0 technologies have made these applications effective platforms for user-generated content, socially enabled to engage users. Recent growth in cloud services have caused many established companies to push services that traditionally appear in a desktop environment into a cloud-enabled software-as-a-service (SaaS). SaaS makes user profile information available synchronously across multiple devices. 
+Front-end code and design frameworks, widespread access to low-cost, high-speed interaction connection, and ubitiquous mboile computing have resulted in richly featured, highly interactive applications distributed through the internet as web apps. Web 2.0 technologies have made these applications effective platforms for user-generated content, socially enabled to engage users. Recent growth in cloud services have caused many established companies to push services that traditionally appear in a desktop environment into a cloud-enabled software-as-a-service (SaaS). SaaS makes user profile information available synchronously across multiple devices. 
 
 Recent trends in cloud
 
