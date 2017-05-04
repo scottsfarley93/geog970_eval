@@ -1,0 +1,1 @@
+Variable,Interpretation,Distribution,Param1,Param2,Param3,NotesinfoPanel,Is the info panel open?,Bernoulli,0.25,,,infoWidth,Width of the info panel,Binomial,0.3,,,test,test,test ,0,,,

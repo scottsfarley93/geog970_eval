@@ -22,6 +22,34 @@ getDistribution <- function(df, key){
 }
 
 
+generateTheoreticalData.simple <- function(N, class.label, class.file){
+  
+  probData <- read.csv(class.file) ## probability model to generate data from
+  print(probData)
+  ## extract the probabilities 
+  infoPanel <- getParam1(probData, "infoPanel")
+  infoPanelWidth <- getParam1(probData, "infoWidth")
+  print(infoPanelWidth)
+
+  ## For boolean layout data 
+  ## compute probability of 1 success in 1 trial with probability p 
+  ## repeat N times for N test 'maps'
+  trials <- 1
+  model <- list()
+  model$infoPanel <- as.logical(rbinom(N, 1, infoPanel))
+  model$infoPanelWidth <- rbinom(N, 100, infoPanelWidth)
+
+  ## convert to data frame
+  model.df <- do.call(cbind, lapply(model, data.frame, stringsAsFactors=FALSE))
+  names(model.df) <- names(model)
+  
+  ## assign class label
+  model.df$class <- class.label
+  return(model.df)
+}
+
+
+
 generateTheoreticalData <- function(N, class.label, class.file){
   
   probData <- read.csv(class.file) ## probability model to generate data from
