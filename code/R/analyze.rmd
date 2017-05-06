@@ -29,8 +29,9 @@ library(factoextra)
 library(knitr)
 library(reshape2)
 library(plyr)
+setwd("/users/scottsfarley/documents/geog970_eval/code/R")
 source("./input.data.R")
-setwd("/users/scottsfarley/documents/geog970_eval")
+
 ```
 
 # Abstract
@@ -209,8 +210,8 @@ In this problem, we'll try to identify between our two key user groups:
 Here, we will take the scenarios above and translate them into probabilities using the author's expert judgement and understanding of expected use. Each interface component will have a probability of being used. Panel components have additional estimates of their width, as this component may be resized interactively by the user. Finally, the map component will have a distribution modeling its zoom level and geographic center.Additional components, such as whether useful metadata will accompany the map and the entry point to arrive at the map are also modeled in this framework. The initial probabilities are shown in the tables below. 
 
 ```{r, echo=F}
-student.model <- read.csv("./../../models/student.model.csv")
-research.model <- read.csv("./../../models/research.model.csv")
+student.model <- read.csv("./../../models/novice.model.csv")
+research.model <- read.csv("./../../models/expert.model.csv")
 
 kable(student.model[c("Variable", "Interpretation", "Distribution", "Param1", "Param2")])
 
@@ -221,11 +222,13 @@ kable(research.model[c("Variable", "Interpretation", "Distribution", "Param1", "
 Once the probabilities have been assigned, they are read into R. R generated a probability density function from the model then draws *N* random samples from that distribution. In this way, we have *N* 'users' in each group that we can analyze as real data. 
 
 ```{r, echo=F}
-N = 1000
-student.dat <- generateTheoreticalData(N, "Student", "./../../models/student.model.csv")
-research.dat <- generateTheoreticalData(N, "Research", "./../../models/research.model.csv")
 
-kable(head(student.dat[1:5]))
+source("./input.data.R")
+N = 500
+student.dat <- generateTheoreticalData.simple(N, "Novice", "./../../models/novice.model.csv")
+research.dat <- generateTheoreticalData.simple(N, "Research", "./../../models/expert.model.csv")
+
+kable(head(student.dat[1:2]))
 ```
 
 ## Negotiation of Initial Distributions
@@ -234,6 +237,155 @@ Distributions were negotiated in a set of informal interviews carried out in Apr
 ## Visually Assess the Data
 
 Using this data, we can graphically assess whether it appears that there are differences in the two models (we built the models, so we know that they are -- but we can see how that appears as a PDF here). When we get real data, we can see how the theoretical models align with the real usership data. Also, we can, I think, integrate the new data using Bayesian data assimilation. More on that as the idea develops. 
+
+```{r}
+
+all <- rbind(student.dat, research.dat)
+
+ggplot(all) + geom_density(aes(x = infoPanelWidth, color=class, group=class, fill=class)) + ggtitle("Generated Distribution of Panel Widths") + xlab("Panel width (%)") + ylab("Density") + scale_x_continuous(limits = c(0, 100))
+```
+
+```{r}
+
+all <- rbind(student.dat, research.dat)
+
+ggplot(all) + geom_bar(aes(x = infoPanel, color=class, group=class, fill=class), position='dodge') + ggtitle("Generated Distribution of Panel Use") + xlab("Use of info panel during session") + ylab("Frequency") 
+```
+
+
+```{r}
+real.dat <- generateTheoreticalData.simple(100, "Real", "./../../models/real.model.csv")
+
+real.all <- rbind(all, real.dat)
+
+ggplot(real.all) + geom_bar(aes(x = infoPanel, color=class, group=class, fill=class), position='dodge') + ggtitle("Generated Distribution of Panel Use") + xlab("Use of info panel during session") + ylab("Frequency") 
+
+ggplot(real.all) + geom_density(aes(x = infoPanelWidth, color=class, group=class, fill=class)) + ggtitle("Generated Distribution of Panel Widths") + xlab("Panel width (%)") + ylab("Density") + scale_x_continuous(limits = c(0, 100))
+
+```
+
+```{r, echo=F}
+
+dat.noclass <- real.all[, -3]
+
+k = 3
+clusters <- fanny(dat.noclass, k, memb.exp = 3)
+
+
+
+```
+
+```{r}
+
+r <- numeric()
+
+k = 1
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[1] <- avg
+
+
+k = 2
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[2] <- avg
+
+k = 3
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[3] <- avg
+
+k = 4
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[4] <- avg
+
+k = 5
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[5] <- avg
+
+
+k = 6
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[6] <- avg
+
+k = 7
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[7] <- avg
+
+k = 8
+clusters <- fanny(dat.noclass, k, memb.exp = 2)
+x <- fviz_silhouette(clusters)
+avg <- mean(x$data$sil_width)
+r[8] <- avg
+
+
+```
+
+```{r, echo=F}
+
+fviz_cluster(clusters)
+
+fviz_screeplot(clusters)
+
+fviz_silhouette(clusters)
+
+plot(clusters, which=1, main=paste("Cluster membership, k=", k))
+
+mem <- data.frame(clusters$membership)
+mem$class <- as.factor(real.all$class)
+names(mem) <- c("C1", "C2", "class")
+
+ggplot(mem, aes(x = C1, y=C2, color=C1, shape=class)) + geom_point(size=3) + ggtitle("Percent cluster membership") + xlab("Probabiity of Research ->") + ylab("Probabiity of Novice ->") + scale_color_continuous(low='blue', high='red', "Modeled membership\npercentage of research class") +scale_shape("Actual Class")
+
+```
+
+```{r}
+
+
+dat.noclass <- real.all[, -3]
+
+k = 2
+clusters <- fanny(dat.noclass, k, memb.exp = 3)
+
+
+q <- data.frame(clusters$membership)
+q$class <- real.all$class
+ggplot(q, aes(X1, X2)) + geom_density_2d(aes(alpha=..level..), binwidth=0.) + scale_fill_continuous(low='red', high='cyan', guide=F) + geom_point(aes(x = X1, y=X2, shape=class, col=class)) + scale_shape('Actual Class') + scale_color_discrete('Acutal Class')
+```
+
+
+
+
+```{r}
+
+
+
+
+
+
+
+
+```
+
+
+
+
 
 ```{r, echo=F}
 ## plot the zoom level of the different user groups 
@@ -326,7 +478,7 @@ mem$class <- as.factor(dat$class)
 names(mem) <- c("C1", "C2", "class")
 
 
-ggplot(mem, aes(x = C1, y=C2, color=C1, shape=class)) + geom_point(size=3) + ggtitle("Percent cluster membership") + xlab("Probabiity of Research ->") + ylab("Probabiity of Student ->") + scale_color_continuous("Modeled membership\npercentage of research class") + scale_shape("Actual class")
+ggplot(mem, aes(x = C1, y=C2, color=C1, shape=class)) + geom_point(size=3) + ggtitle("Percent cluster membership") + xlab("Probabiity of Research ->") + ylab("Probabiity of Student ->") + scale_color_continuous(low='blue', high='red', "Modeled membership\npercentage of research class") + scale_shape("Actual class")
 
 ```
 
@@ -543,6 +695,8 @@ calcPosteriorForProportion <- function(successes, total, a, b)
      print(paste("mode for prior=",prior_mode,", for likelihood=",likelihood_mode,", for posterior=",posterior_mode))
      print(paste("mean for prior=",prior_mean,", for likelihood=",likelihood_mean,", for posterior=",posterior_mean))
      print(paste("sd for prior=",prior_sd,", for likelihood=",likelihood_sd,", for posterior=",posterior_sd))
+     print(paste("Posterior A: ", posterior_a))
+     print(paste("Posterior B: ", posterior_b))
      return(posterior)
 }
 
@@ -558,13 +712,13 @@ makeQuantiles <- function(dist, quantiles=c(0.25, 0.5, 0.75)){
   return(list(q1, q2, q3))
 }
 
-# q <- makeQuantiles(p)
+q <- makeQuantiles(p)
+# 
+
+d <- findBeta(q[[1]], q[[2]], q[[3]])
 
 
-# d <- findBeta(q[[1]], q[[2]], q[[3]])
-
-
-p <- calcPosteriorForProportion(1, 10, 10, 10)
+p <- calcPosteriorForProportion(50, 100, 10, 100)
 
 x <- beta.select(list(p=0.1, x=quantile(p, 0.1)), list(p=0.5, x=quantile(p, 0.5)))
 p <- calcPosteriorForProportion(1, 10, x[[1]], x[[2]])
@@ -604,12 +758,47 @@ summary(samp)
 
 q <- as.numeric(as.mcmc(samp))
 plot(density(q))
-# t1 <- findBeta(list(x=0.25, p=quantile(q)[[2]]), list(x=0.75, p=quantile(q)[[4]]), list(x=0.5, p=quantile(q)[[3]]))
-# lines(density(rbeta(10000, t1[[1]], t1[[2]])), col='green')
-# 
-# 
-# p <- calcPosteriorForProportion(Y, n, a, b)
-# t2 <- findBeta(list(x=0.25, p=quantile(p)[[2]]), list(x=0.75, p=quantile(p)[[4]]), list(x=0.5, p=quantile(p)[[3]]))
-# lines(density(rbeta(10000, t2[[1]], t2[[2]])), col='red')
+t1 <- findBeta(list(x=0.25, p=quantile(q)[[2]]), list(x=0.75, p=quantile(q)[[4]]), list(x=0.5, p=quantile(q)[[3]]))
+lines(density(rbeta(10000, t1[[1]], t1[[2]])), col='green')
+
+
+p <- calcPosteriorForProportion(Y, n, a, b)
+t2 <- findBeta(list(x=0.25, p=quantile(p)[[2]]), list(x=0.75, p=quantile(p)[[4]]), list(x=0.5, p=quantile(p)[[3]]))
+lines(density(rbeta(10000, t2[[1]], t2[[2]])), col='red')
 ```
 
+
+```{r}
+N = 50
+novice.dat <- generateTheoreticalData.simple(N, "Novice", "./../../models/novice.model.csv")
+
+p <- sum(research.dat$infoPanel) / length(research.dat$infoPanel)
+nu <- N
+
+a <- p * nu
+b <- nu*(1-p)
+
+successes <- 50
+trials <- 100
+
+
+real.success <- sum(real.dat$infoPanel)
+real.trials <- length(real.dat$infoPanel)
+
+# real.p <- sum(real.dat$infoPanel) / length(real.dat$infoPanel)
+# real.nu <- length(real.dat$infoPanel)
+# # 
+# real.a <- real.p * real.nu
+# real.b <- real.nu*(1-real.p)
+
+post <- calcPosteriorForProportion(real.success, real.trials, a, b)
+
+newA <- 122
+newB <- 28
+
+newSuccess <- 50
+newTrials <- 60
+
+post <- calcPosteriorForProportion(newSuccess, newTrials, newA, newB)
+
+```
