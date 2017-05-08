@@ -772,7 +772,7 @@ lines(density(rbeta(10000, t2[[1]], t2[[2]])), col='red')
 N = 50
 novice.dat <- generateTheoreticalData.simple(N, "Novice", "./../../models/novice.model.csv")
 
-p <- sum(research.dat$infoPanel) / length(research.dat$infoPanel)
+p <- sum(novice.dat$infoPanel) / length(novice.dat$infoPanel)
 nu <- N
 
 a <- p * nu
@@ -791,7 +791,7 @@ real.trials <- length(real.dat$infoPanel)
 # real.a <- real.p * real.nu
 # real.b <- real.nu*(1-real.p)
 
-post <- calcPosteriorForProportion(real.success, real.trials, a, b)
+post <- calcPoster3iorForProportion(real.success, real.trials, a, b)
 
 newA <- 122
 newB <- 28

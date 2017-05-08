@@ -3,6 +3,17 @@
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
+\usepackage{wrapfig}
+\usepackage{tcolorbox}
+\usepackage{lipsum}
+
+\newenvironment{WrapText}[1][r]
+  {\wrapfigure{#1}{0.5\textwidth}\tcolorbox}
+  {\endtcolorbox\endwrapfigure}
+
+\newcommand\Text{% some text for the example
+tesque cursus luctus mauris. Nulla malesuada porttitor diam. Donec felis erat, congue non, volutpat at, tincidunt tristique, libero. Vivamus viverra fermentum felis. Donec nonummy pellentesque ante. Phasellus adipiscing semper elit. Proin fermentum massa ac quam. Sed diam turpis, molestie vitae, placerat a, molestie nec, leo. Maecenas lacinia. Nam ipsum ligula, eleifend at, accumsan nec, suscipit a, ipsum.}
+
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
@@ -556,18 +567,14 @@ solved analytically in closed-form. While nonconjugate priors do not
 pose a structural problem in the analysis, they can hinder direct
 interpretation {[}27{]} and often require a numerical solution using
 complex sampling algorithms such as the Gibbs sampling and Markov Chain
-Monte Carlo (MCMC) integration {[}{\textbf{???}}{]}. The details of an
-analytical application of Bayes' Theorem to a beta prior and binomial
-likelihood is shown in Box 1.
+Monte Carlo (MCMC) integration {[}42{]}. The details of an analytical
+application of Bayes' Theorem to a beta prior and binomial likelihood is
+shown in Box 1.
 
-\begin{longtable}[]{@{}c@{}}
-\toprule
-\begin{minipage}[b]{0.97\columnwidth}\centering\strut
-Box 1: Binomial Data Assimilation with a Conjugate Beta Prior\strut
-\end{minipage}\tabularnewline
-\midrule
-\endhead
-\begin{minipage}[t]{0.97\columnwidth}\centering\strut
+\begin{WrapText}
+\Text
+\end{WrapText}
+
 In the context of pSBD, a common conjugate prior is the beta
 distribution, as it provides an easily-interpretable,
 analytically-tractable prior distribution for the probability of success
@@ -577,9 +584,7 @@ Beta prior represents current knowledge about how the probability of
 success is distributed, with uncertainty. This distribution has two
 shape parameters \(\alpha\) and \(\beta\) and has support on the
 interval {[}0, 1{]}.\strut
-\end{minipage}\tabularnewline
-\bottomrule
-\end{longtable}
+
 
 The first step in the assimilation is to choose the appropriate
 parameters for the prior distribution. Specifying the shape parameters
@@ -612,7 +617,7 @@ In this section, I introduce a simple yet illustrative case study to
 demonstrate the process and utility of pSBD. Consider a web-based
 interactive application with an interface whose purpose is to support
 understanding of the spatiotemporal and multivariate attribute patterns
-of crime events in Chicago (loosely based on {[}42{]} and {[}43{]}). The
+of crime events in Chicago (loosely based on {[}43{]} and {[}44{]}). The
 developers of this application wish to support a rich interactive map,
 encouraging users to browse the spatial patterns of crime, while
 providing details, including crime type, date and time, for each
@@ -820,7 +825,7 @@ envisioned usage, but forms a coherent cluster. If \^{}\{C\}
 but it forms multiple clusters.
 
 The clusters are generated using the \texttt{fanny} function in the R
-package \texttt{cluster} {[}44{]}. The silhouette method of choosing the
+package \texttt{cluster} {[}45{]}. The silhouette method of choosing the
 optimal number of clusters is implemented in the \texttt{silhouette}
 function, also in the \texttt{cluster} package. Choices for \(C\)
 between 2 and 8 were evaluated, and the \(C\) that maximized the
@@ -883,7 +888,7 @@ data, then, is \(X \sim Binom(1, 0.78)\) with 100 independent trials. By
 applying Bayes' Theorem, the shape parameters of the posterior
 distribution are shown to be \(\alpha = Y + (n*m) - 1 = 122\) and
 \(\beta= N - Y + (n*(1-m)) - 1 = 28\). To interpret these new shape
-parameters, \alpha and \beta can be converted back into terms of
+parameters, \(\alpha\) and \(\beta\) can be converted back into terms of
 effective sample size and expected value of the posterior distribution.
 In this case, the new expected value of the posterior is \(m=0.813\) and
 the new effective sample size is \(\nu=150\). Note that this sample size
@@ -912,7 +917,7 @@ panel.
 
 \section{Discussion}\label{discussion}
 
-\section{Advantages of pSBD over traditional
+\subsection{Advantages of pSBD over traditional
 SBD}\label{advantages-of-psbd-over-traditional-sbd}
 
 The hypothetical interface and scenarios described above demonstrate the
@@ -924,19 +929,18 @@ often uses qualitative language to communicate the differences in usage
 between scenarios. By introducing visuals into the design process, pSBD
 promotes visual communication to efficient present abstract thoughts and
 ideas about the intended UX, replacing the weak language with a visual
-model {[}45{]}. Throughout science and industry, tools that support
+model {[}46{]}. Throughout science and industry, tools that support
 visual analytics have been a priority in new tool development as a means
 to leverage the strengths of both human and computerized data
 processing. Broadly, visual analytics tools foster constructive
 evaluations, correction, and rapid improvements in our models of
 physical processes, and can improve both human knowledge and decisions
-{[}{\textbf{???}}{]}. Visualizations of complex data, such as
-qualitative, unstructured descriptions of an intended tool, can offload
-cognitive processes to perceptive processes, allowing new features to
-emerge that are easily picked up by the visual system
-{[}{\textbf{???}},46{]}. Thus, through the use of pSBD, designers may
-uncover unintended patterns that emerge within and among different use
-case scenarios.
+{[}47{]}. Visualizations of complex data, such as qualitative,
+unstructured descriptions of an intended tool, can offload cognitive
+processes to perceptive processes, allowing new features to emerge that
+are easily picked up by the visual system {[}48,49{]}. Thus, through the
+use of pSBD, designers may uncover unintended patterns that emerge
+within and among different use case scenarios.
 
 A second advantage of pSBD is that it allows application designers to
 determine if an early stage application is truly serving its target user
@@ -1009,8 +1013,8 @@ are useful throughout the process for communicating between developers,
 stakeholders, and to understand real usage patterns in conjunction with
 developer intuition.
 
-\pagebreak
-\#References
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
 \hypertarget{ref-Hassan:2011uh}{}
@@ -1219,29 +1223,46 @@ interpretation and validation of cluster analysis. Journal of
 Computational and Applied Mathematics 1987;20:53--65.
 doi:\href{https://doi.org/10.1016/0377-0427(87)90125-7}{10.1016/0377-0427(87)90125-7}.
 
+\hypertarget{ref-Carlin:1991cl}{}
+{[}42{]} Carlin BP, Polson NG. Inference for nonconjugate Bayesian
+Models using the Gibbs sampler. Canadian Journal of Statistics
+1991;19:399--405.
+doi:\href{https://doi.org/10.2307/3315430}{10.2307/3315430}.
+
 \hypertarget{ref-chicagoPoliceMap}{}
-{[}42{]} Department CP. Clear map crime incidents 2017.
+{[}43{]} Department CP. Clear map crime incidents 2017.
 \url{http://gis.chicagopolice.org/clearmap/startpage.htm\#} (accessed
 May 6, 2017).
 
 \hypertarget{ref-chicagoShootingsMap}{}
-{[}43{]} Ali T. Where shootings have occurred in chicago since 2010
+{[}44{]} Ali T. Where shootings have occurred in chicago since 2010
 (map) 2016.
 \url{https://www.dnainfo.com/chicago/20150707/downtown/where-shootings-have-occurred-chicago-since-2010-map}
 (accessed May 6, 2017).
 
 \hypertarget{ref-clusterR}{}
-{[}44{]} Maechler M, Rousseeuw P, Struyf A, Hubert M, Hornik K. Cluster:
+{[}45{]} Maechler M, Rousseeuw P, Struyf A, Hubert M, Hornik K. Cluster:
 Cluster analysis basics and extensions. 2016.
 
 \hypertarget{ref-Cyrs:1997gz}{}
-{[}45{]} Cyrs TE. Visual Thinking: Let Them See What You Are Saying. New
+{[}46{]} Cyrs TE. Visual Thinking: Let Them See What You Are Saying. New
 Directions for Teaching and Learning 1997;1997:27--32.
 doi:\href{https://doi.org/10.1002/tl.7104}{10.1002/tl.7104}.
 
+\hypertarget{ref-Keim:2008gg}{}
+{[}47{]} Keim D, Andrienko G, Fekete J-D, Görg C, Kohlhammer J, Melançon
+G. Visual Analytics: Definition, Process, and Challenges. In:.
+Information visualization, Berlin, Heidelberg: Springer Berlin
+Heidelberg; 2008, pp. 154--75.
+doi:\href{https://doi.org/10.1007/978-3-540-70956-5_7}{10.1007/978-3-540-70956-5\_7}.
+
 \hypertarget{ref-pomerantz1989emergent}{}
-{[}46{]} Pomerantz JR, Pristach EA. Emergent features, attention, and
+{[}48{]} Pomerantz JR, Pristach EA. Emergent features, attention, and
 perceptual glue in visual form perception. Journal of Experimental
 Psychology: Human Perception and Performance 1989;15:635.
+
+\hypertarget{ref-hegarty2011cognitive}{}
+{[}49{]} Hegarty M. The cognitive science of visual-spatial displays:
+Implications for design. Topics in Cognitive Science 2011;3:446--74.
 
 \end{document}
